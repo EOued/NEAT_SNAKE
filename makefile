@@ -1,4 +1,4 @@
-OFILES=main.o  grid_display.o window.o snake.o linkedList.o
+OFILES=main.o  grid_display.o window.o snake.o linkedList.o errors.o
 FLAGS=-g -Wall -Wextra -Wvla -Werror -fsanitize=address,undefined
 
 main: $(OFILES)
@@ -19,5 +19,7 @@ snake.o: snake.c
 linkedList.o: UTILS/linkedList.c
 	gcc -c -g UTILS/linkedList.c
 
+errors.o: UTILS/errors.c
+	gcc -c -g UTILS/errors.c
 clean:
 	rm -rf main *.o

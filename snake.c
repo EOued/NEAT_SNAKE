@@ -18,7 +18,6 @@ snake* initSnake(doublyLinkedList* grid)
   s->appleX      = -1;
   s->appleY      = -1;
   s->renderApple = 0;
-  s->appleEaten  = 0;
   return s;
 }
 
@@ -57,8 +56,10 @@ void moveSnake(snake* snake, doublyLinkedList* grid)
   snake->delX = snake->snake->start->x;
   snake->delY = snake->snake->start->y;
   append(snake->snake, x, y);
-  if (!snake->appleEaten) deleteStart(snake->snake);
-  snake->appleEaten = 0;
+  if (snake->snake->end->x == snake->appleX && snake->snake->end->y == snake->appleY)
+    generateApple(snake, grid);
+  else
+    deleteStart(snake->snake);
   return;
 }
 
@@ -74,11 +75,5 @@ void generateApple(snake* snake, doublyLinkedList* grid)
   snake->appleX      = node->x;
   snake->appleY      = node->y;
   snake->renderApple = 1;
-  return;
-}
-void eatApple(snake* snake, doublyLinkedList* grid)
-{
-  snake->appleEaten = 1;
-  generateApple(snake, grid);
   return;
 }

@@ -25,12 +25,10 @@ typedef struct
   int appleX;
   int appleY;
   int alive;
-  int appleEaten;
   int renderApple;
 } snake;
 
 snake* initSnake(doublyLinkedList* grid);
 void moveSnake(snake* snake, doublyLinkedList* grid);
 void generateApple(snake* snake, doublyLinkedList* grid);
-void eatApple(snake* snake, doublyLinkedList* grid);
 #endif

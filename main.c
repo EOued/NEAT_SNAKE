@@ -1,13 +1,12 @@
+#include "UTILS/errors.h"
 #include "UTILS/linkedList.h"
 #include "WINDOW_HANDLING/grid_display.h"
 #include "WINDOW_HANDLING/window.h"
 #include "snake.h"
-#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#include <termios.h>
 #include <time.h>
 
 int main()
@@ -16,36 +15,20 @@ int main()
 
   SDL_Window* g_main_window;
   SDL_Renderer* g_main_renderer;
-  if (!init(&g_main_window, &g_main_renderer))
-  {
-    fprintf(stderr, "Failed to initialise window or renderer\n");
-    exit(1);
-  }
+  if (!init(&g_main_window, &g_main_renderer)) sendError("Failed to load window", 1);
   snake* snake;
 
   doublyLinkedList* grid;
-  if (!(grid = initList()))
-  {
-    fprintf(stderr, "Failed to initialise grid");
-    exit(1);
-  }
+  if (!(grid = initList())) sendError("Failed to initialise grid", 1);
 
   for (int i = 0; i < HEIGHT * WIDTH; i++) append(grid, i % WIDTH, i / WIDTH);
 
-  if (!(snake = initSnake(grid)))
-  {
-    fprintf(stderr, "Failed to initialise snake");
-    exit(1);
-  }
+  if (!(snake = initSnake(grid))) sendError("Failed to initialise snake", 1);
 
   SDL_Event event;
 
   SDL_Rect* boxes;
-  if (!(boxes = initBoxes()))
-  {
-    fprintf(stderr, "Failed to initialise boxes");
-    exit(1);
-  }
+  if (!(boxes = initBoxes())) sendError("Failed to initialise boxed", 1);
 
   // Representation of the grid
 
@@ -78,8 +61,6 @@ int main()
       // Game events
       frames = 0;
       moveSnake(snake, grid);
-      if (snake->snake->end->x == snake->appleX && snake->snake->end->y == snake->appleY)
-        eatApple(snake, grid);
       // Render events
       if (snake->snake->end->before)
         renderBox(g_main_renderer, boxes, snake->snake->end->before->x,
