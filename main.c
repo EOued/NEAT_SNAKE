@@ -31,6 +31,9 @@ int main()
 
   SDL_Event event;
 
+  doublyLinkedList* movesList;
+  if (!(movesList = initList())) sendError("Failed to initialise moves list", 1);
+
   SDL_Rect* boxes;
   if (!(boxes = initBoxes())) sendError("Failed to initialise boxes", 1);
 
@@ -74,6 +77,18 @@ int main()
     if (frames > 8 && snake->alive)
     {
       // Game events
+      if (movesList->size)
+      {
+        switch (movesList->start->x)
+        {
+        case Up: MoveUp(snake); break;
+        case Down: MoveDown(snake); break;
+        case Left: MoveLeft(snake); break;
+        case Right: MoveRight(snake); break;
+        default: break;
+        }
+        deleteStart(movesList);
+      }
       frames = 0;
       moveSnake(snake, grid);
       // Render events
@@ -103,10 +118,10 @@ int main()
       case SDL_KEYDOWN:
       {
         running = event.key.keysym.scancode != SDL_SCANCODE_ESCAPE;
-        if (event.key.keysym.scancode == SDL_SCANCODE_W) MoveUp(snake);
-        if (event.key.keysym.scancode == SDL_SCANCODE_A) MoveLeft(snake);
-        if (event.key.keysym.scancode == SDL_SCANCODE_S) MoveDown(snake);
-        if (event.key.keysym.scancode == SDL_SCANCODE_D) MoveRight(snake);
+        if (event.key.keysym.scancode == SDL_SCANCODE_W) append(movesList, Up, 0);
+        if (event.key.keysym.scancode == SDL_SCANCODE_A) append(movesList, Left, 0);
+        if (event.key.keysym.scancode == SDL_SCANCODE_S) append(movesList, Down, 0);
+        if (event.key.keysym.scancode == SDL_SCANCODE_D) append(movesList, Right, 0);
       }
       default: break;
       }
@@ -117,6 +132,7 @@ int main()
   freeList(snake->snake);
   free(snake);
   freeList(grid);
+  freeList(movesList);
   SDL_FreeSurface(im);
   printf("All data freed\n");
   SDL_DestroyTexture(im_texture);
