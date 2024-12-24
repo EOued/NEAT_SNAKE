@@ -2,7 +2,7 @@ OFILES=main.o  grid_display.o window.o snake.o linkedList.o errors.o
 FLAGS=-g -Wall -Wextra -Wvla -Werror -fsanitize=address,undefined
 
 main: $(OFILES)
-	gcc -O0 $(OFILES) $(FLAGS) -o main -lm -lSDL2 -lSDL2_ttf
+	gcc -O0 $(OFILES) $(FLAGS) -o main -lm -lSDL2 -lSDL2_ttf -lSDL2_image
 
 main.o: main.c
 	gcc -c -g main.c

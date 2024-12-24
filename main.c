@@ -3,6 +3,10 @@
 #include "WINDOW_HANDLING/grid_display.h"
 #include "WINDOW_HANDLING/window.h"
 #include "snake.h"
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,9 +32,13 @@ int main()
   SDL_Event event;
 
   SDL_Rect* boxes;
-  if (!(boxes = initBoxes())) sendError("Failed to initialise boxed", 1);
+  if (!(boxes = initBoxes())) sendError("Failed to initialise boxes", 1);
 
   // Representation of the grid
+
+  SDL_Surface* im         = IMG_Load("sprite.png");
+  SDL_Texture* im_texture = SDL_CreateTextureFromSurface(g_main_renderer, im);
+  if (!im_texture) sendError("Failed to create texture", 1);
 
   struct timeval oldTime, actualTime, startTime;
   gettimeofday(&oldTime, NULL);
@@ -43,6 +51,12 @@ int main()
 
   int running = 1;
   generateApple(snake, grid);
+  SDL_Rect rect;
+  rect.w = SPRITE_SIDE;
+  rect.h = SPRITE_SIDE;
+  SDL_Rect dest_rect;
+  dest_rect.w = SQUARE_SIDE;
+  dest_rect.h = SQUARE_SIDE;
   while (running)
   {
     gettimeofday(&actualTime, NULL);
@@ -53,6 +67,7 @@ int main()
     {
       frames++;
       gettimeofday(&oldTime, NULL);
+      // SDL_RenderCopy(g_main_renderer, im_texture, &rect, &rect);
       SDL_RenderPresent(g_main_renderer);
     }
 
@@ -68,7 +83,13 @@ int main()
       renderBox(g_main_renderer, boxes, snake->snake->end->x, snake->snake->end->y, SNAKE_HEAD);
       renderBox(g_main_renderer, boxes, snake->delX, snake->delY, BACKGROUND);
       if (snake->renderApple)
-        renderBox(g_main_renderer, boxes, snake->appleX, snake->appleY, APPLE);
+      {
+        rect.x      = APPLE_X * SPRITE_SIDE;
+        rect.y      = APPLE_Y * SPRITE_SIDE;
+        dest_rect.x = snake->appleX * (SQUARE_SIDE + 1);
+        dest_rect.y = snake->appleY * (SQUARE_SIDE + 1);
+        SDL_RenderCopy(g_main_renderer, im_texture, &rect, &dest_rect);
+      }
     }
     if (SDL_PollEvent(&event))
     {
@@ -82,20 +103,10 @@ int main()
       case SDL_KEYDOWN:
       {
         running = event.key.keysym.scancode != SDL_SCANCODE_ESCAPE;
-        if (event.key.keysym.scancode == SDL_SCANCODE_W && snake->direction != Down)
-          snake->direction = Up;
-        if (event.key.keysym.scancode == SDL_SCANCODE_A && snake->direction != Right)
-          snake->direction = Left;
-        if (event.key.keysym.scancode == SDL_SCANCODE_S && snake->direction != Up)
-          snake->direction = Down;
-        if (event.key.keysym.scancode == SDL_SCANCODE_D && snake->direction != Left)
-          snake->direction = Right;
-        {
-          if (snake->snake->end->before)
-            renderBox(g_main_renderer, boxes, snake->snake->end->before->x,
-                      snake->snake->end->before->y, SNAKE_BODY);
-        }
-        break;
+        if (event.key.keysym.scancode == SDL_SCANCODE_W) MoveUp(snake);
+        if (event.key.keysym.scancode == SDL_SCANCODE_A) MoveLeft(snake);
+        if (event.key.keysym.scancode == SDL_SCANCODE_S) MoveDown(snake);
+        if (event.key.keysym.scancode == SDL_SCANCODE_D) MoveRight(snake);
       }
       default: break;
       }
@@ -106,7 +117,9 @@ int main()
   freeList(snake->snake);
   free(snake);
   freeList(grid);
+  SDL_FreeSurface(im);
   printf("All data freed\n");
+  SDL_DestroyTexture(im_texture);
 
   SDL_DestroyWindow(g_main_window);
   SDL_DestroyRenderer(g_main_renderer);
