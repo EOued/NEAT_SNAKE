@@ -14,7 +14,7 @@
 #define SNAKE_HEAD_UP_Y 0
 #define SNAKE_HEAD_DOWN_X 1
 #define SNAKE_HEAD_DOWN_Y 2
-#define SKAKE_HEAD_LEFT_X 0
+#define SNAKE_HEAD_LEFT_X 0
 #define SNAKE_HEAD_LEFT_Y 3
 #define SNAKE_HEAD_RIGHT_X 2
 #define SNAKE_HEAD_RIGHT_Y 4
@@ -138,4 +138,8 @@ void MoveUp(snake* snake);
    @param snake The snake
 */
 void MoveDown(snake* snake);
+int snakeHeadSpriteX(snake* snake);
+int snakeHeadSpriteY(snake* snake);
+int snakeBodySpriteX(snake* snake);
+int snakeBodySpriteY(snake* snake);
 #endif

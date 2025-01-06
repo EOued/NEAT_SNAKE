@@ -25,7 +25,7 @@ int main()
   doublyLinkedList* grid;
   if (!(grid = initList())) sendError("Failed to initialise grid", 1);
 
-  for (int i = 0; i < HEIGHT * WIDTH; i++) append(grid, i % WIDTH, i / WIDTH);
+  for (int i = 0; i < HEIGHT * WIDTH; i++) append(grid, i % WIDTH, i / WIDTH, 0);
 
   if (!(snake = initSnake(grid))) sendError("Failed to initialise snake", 1);
 
@@ -93,9 +93,19 @@ int main()
       moveSnake(snake, grid);
       // Render events
       if (snake->snake->end->before)
-        renderBox(g_main_renderer, boxes, snake->snake->end->before->x,
-                  snake->snake->end->before->y, SNAKE_BODY);
-      renderBox(g_main_renderer, boxes, snake->snake->end->x, snake->snake->end->y, SNAKE_HEAD);
+      {
+        dest_rect.x = snake->snake->end->before->x * (SQUARE_SIDE + 1);
+        dest_rect.y = snake->snake->end->before->y * (SQUARE_SIDE + 1);
+        rect.x      = snakeBodySpriteX(snake) * SPRITE_SIDE;
+        rect.y      = snakeBodySpriteY(snake) * SPRITE_SIDE;
+
+        SDL_RenderCopy(g_main_renderer, im_texture, &rect, &dest_rect);
+      }
+      dest_rect.x = snake->snake->end->x * (SQUARE_SIDE + 1);
+      dest_rect.y = snake->snake->end->y * (SQUARE_SIDE + 1);
+      rect.x      = snakeHeadSpriteX(snake) * SPRITE_SIDE;
+      rect.y      = snakeHeadSpriteY(snake) * SPRITE_SIDE;
+      SDL_RenderCopy(g_main_renderer, im_texture, &rect, &dest_rect);
       renderBox(g_main_renderer, boxes, snake->delX, snake->delY, BACKGROUND);
       if (snake->renderApple)
       {
@@ -118,10 +128,10 @@ int main()
       case SDL_KEYDOWN:
       {
         running = event.key.keysym.scancode != SDL_SCANCODE_ESCAPE;
-        if (event.key.keysym.scancode == SDL_SCANCODE_W) append(movesList, Up, 0);
-        if (event.key.keysym.scancode == SDL_SCANCODE_A) append(movesList, Left, 0);
-        if (event.key.keysym.scancode == SDL_SCANCODE_S) append(movesList, Down, 0);
-        if (event.key.keysym.scancode == SDL_SCANCODE_D) append(movesList, Right, 0);
+        if (event.key.keysym.scancode == SDL_SCANCODE_W) append(movesList, Up, 0, 0);
+        if (event.key.keysym.scancode == SDL_SCANCODE_A) append(movesList, Left, 0, 0);
+        if (event.key.keysym.scancode == SDL_SCANCODE_S) append(movesList, Down, 0, 0);
+        if (event.key.keysym.scancode == SDL_SCANCODE_D) append(movesList, Right, 0, 0);
       }
       default: break;
       }

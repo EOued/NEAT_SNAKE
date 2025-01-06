@@ -12,8 +12,8 @@ snake* initSnake(doublyLinkedList* grid)
   if (!(s = malloc(sizeof(snake)))) return NULL;
   s->direction = Right;
   if (!(s->snake = initList())) return NULL;
-  prepend(s->snake, 4, 4);
-  deleteElement(grid, 4 * WIDTH + 4, 0);
+  prepend(s->snake, 4, 4, s->direction);
+  deleteElement(grid, 4, 4, 0);
   s->alive       = 1;
   s->appleX      = -1;
   s->appleY      = -1;
@@ -37,26 +37,26 @@ void moveSnake(snake* snake, doublyLinkedList* grid)
   default: break;
   }
   if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
-  {
-    // Killing snake
+
+  { // Killing snake
     snake->alive = 0;
     return;
   }
-  if (!searchInList(grid, x, y))
+  if (!searchInList(grid, x, y, 0))
   {
     // For rendering
-    append(snake->snake, x, y);
+    append(snake->snake, x, y, snake->direction);
     deleteStart(snake->snake);
     // Killing snake
     snake->alive = 0;
     return;
   }
-  deleteElement(grid, x, y);
-  append(grid, snake->snake->start->x, snake->snake->start->y);
+  deleteElement(grid, x, y, 0);
+  append(grid, snake->snake->start->x, snake->snake->start->y, 0);
 
   snake->delX = snake->snake->start->x;
   snake->delY = snake->snake->start->y;
-  append(snake->snake, x, y);
+  append(snake->snake, x, y, snake->direction);
   if (snake->snake->end->x == snake->appleX && snake->snake->end->y == snake->appleY)
   {
     generateApple(snake, grid);
@@ -105,4 +105,51 @@ void MoveDown(snake* snake)
   if (snake->direction == Up) return;
   snake->direction = Down;
   return;
+}
+int snakeHeadSpriteX(snake* snake)
+{
+  switch (snake->direction)
+  {
+  case Up: return SNAKE_HEAD_UP_X;
+
+  case Down: return SNAKE_HEAD_DOWN_X;
+  case Left: return SNAKE_HEAD_LEFT_X;
+  default: return SNAKE_HEAD_RIGHT_X;
+  }
+}
+int snakeHeadSpriteY(snake* snake)
+{
+  switch (snake->direction)
+  {
+  case Up: return SNAKE_HEAD_UP_Y;
+
+  case Down: return SNAKE_HEAD_DOWN_Y;
+  case Left: return SNAKE_HEAD_LEFT_Y;
+  default: return SNAKE_HEAD_RIGHT_Y;
+  }
+}
+
+int snakeBodySpriteX(snake* snake)
+{
+  if (!snake->snake->end || !snake->snake->end->before) return -1;
+  switch (snake->snake->end->before->orientation)
+  {
+  case Up: return SNAKE_BODY_STRAIGHT_UP_X;
+
+  case Down: return SNAKE_BODY_STRAIGHT_DOWN_X;
+  case Left: return SNAKE_BODY_STRAIGHT_LEFT_X;
+  default: return SNAKE_BODY_STRAIGHT_RIGHT_X;
+  }
+}
+int snakeBodySpriteY(snake* snake)
+{
+  if (!snake->snake->end || !snake->snake->end->before) return -1;
+  switch (snake->snake->end->before->orientation)
+  {
+  case Up: return SNAKE_BODY_STRAIGHT_UP_Y;
+
+  case Down: return SNAKE_BODY_STRAIGHT_DOWN_Y;
+  case Left: return SNAKE_BODY_STRAIGHT_LEFT_Y;
+  default: return SNAKE_BODY_STRAIGHT_RIGHT_Y;
+  }
 }

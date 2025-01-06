@@ -29,30 +29,32 @@ int isEmpty(doublyLinkedList* list)
   if (!list) return 0;
   return !list->start && !list->end;
 }
-void prepend(doublyLinkedList* list, int x, int y)
+void prepend(doublyLinkedList* list, int x, int y, int orientation)
 {
   if (!list) return;
   struct Node* node;
   if (!(node = malloc(sizeof(struct Node)))) return;
-  node->x      = x;
-  node->y      = y;
-  node->next   = list->start;
-  node->before = NULL;
+  node->x           = x;
+  node->y           = y;
+  node->orientation = orientation;
+  node->next        = list->start;
+  node->before      = NULL;
   if (list->start) list->start->before = node;
   list->start = node;
   if (!list->end) list->end = list->start;
   list->size++;
   return;
 }
-void append(doublyLinkedList* list, int x, int y)
+void append(doublyLinkedList* list, int x, int y, int orientation)
 {
   if (!list) return;
   struct Node* node;
   if (!(node = malloc(sizeof(struct Node)))) return;
-  node->x      = x;
-  node->y      = y;
-  node->next   = NULL;
-  node->before = list->end;
+  node->x           = x;
+  node->y           = y;
+  node->orientation = orientation;
+  node->next        = NULL;
+  node->before      = list->end;
   if (list->end) list->end->next = node;
   list->end = node;
   if (!list->start) list->start = list->end;
@@ -83,12 +85,13 @@ void deleteEnd(doublyLinkedList* list)
   return;
 }
 
-int searchInList(doublyLinkedList* list, int x, int y)
+int searchInList(doublyLinkedList* list, int x, int y, int orientation)
 {
   if (!list) return 0;
   struct Node* temp = list->start;
   if (!temp) return 0;
-  while (temp && (temp->x != x || temp->y != y)) temp = temp->next;
+  while (temp && (temp->x != x || temp->y != y || temp->orientation != orientation))
+    temp = temp->next;
   return temp != NULL;
 }
 
@@ -105,15 +108,15 @@ void printList(doublyLinkedList* list)
   return;
 }
 
-void deleteElement(doublyLinkedList* list, int x, int y)
+void deleteElement(doublyLinkedList* list, int x, int y, int orientation)
 {
   if (!list || (!list->start && !list->end)) return;
-  if (list->start->x == x && list->start->y == y)
+  if (list->start->x == x && list->start->y == y && list->start->orientation == orientation)
   {
     deleteStart(list);
     return;
   }
-  if (list->end->x == x && list->end->y == y)
+  if (list->end->x == x && list->end->y == y && list->end->orientation == orientation)
   {
     deleteEnd(list);
     return;
