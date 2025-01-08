@@ -1,4 +1,4 @@
-OFILES=main.o  grid_display.o window.o snake.o linkedList.o errors.o
+OFILES=main.o  grid_display.o window.o snake.o linkedList.o errors.o quicksort.o
 FLAGS=-g -Wall -Wextra -Wvla -Werror -fsanitize=address,undefined
 
 main: $(OFILES)
@@ -21,5 +21,8 @@ linkedList.o: UTILS/linkedList.c
 
 errors.o: UTILS/errors.c
 	gcc -c -g UTILS/errors.c
+
+quicksort.o: UTILS/quicksort.c
+	gcc -c -g UTILS/quicksort.c
 clean:
 	rm -rf main *.o
