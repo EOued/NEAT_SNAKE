@@ -113,7 +113,7 @@ NN* crossover(NN* parent1, NN* parent2, float disabledPercentage)
         parent2->genes_connections[p2InnovIndex].disabled)
     {
       child->genes_connections[i - shift].disabled =
-          (rand() % 100 < (int)(disabledPercentage * 100));
+          (rand() % 100 <= (int)(disabledPercentage * 100));
     }
 
     child->connection_n++;
@@ -145,8 +145,24 @@ NN* crossover(NN* parent1, NN* parent2, float disabledPercentage)
 end:
   return child;
 }
+float rdmFloat(float a) { return ((float)rand() / (float)(RAND_MAX)) * a; }
 
-NN* mutation(NN* nn, percentages* percentage) { int rdm = rand() % 100; }
+NN* mutation(NN* nn, percentages* percentage)
+{
+  int rdm;
+  int rdm2;
+  for (int i = 0; i < nn->connection_n; i++)
+  {
+    rdm  = rand() % 100;
+    rdm2 = rand() % 100;
+    if (rdm <= percentage->weightModif)
+    {
+      if (rdm2 <= percentage->uniformPerturbation) nn->genes_connections[i].weight *= rdmFloat(2);
+      else
+        nn->genes_connections[i].weight = rdmFloat(1);
+    }
+  }
+}
 
 connection initConnection(int input, enum state inputState, int output, enum state outputState,
                           float weight, int disabled, int innov)

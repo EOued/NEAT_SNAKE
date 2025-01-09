@@ -27,8 +27,7 @@ Our mutation operators operated on a single network and would select a random we
 - add or subtract a random number between 0 and 1 to/from the weight.
 - Change the sign of a weight.
 - swap weights on a single neuron.
-You can certainly get creative with mutation operators, you may discover something that works better for your particular problem.
--- stackoverflow
+You can certainly get creative with mutation operators, you may discover something that works better for your particular problem. -- stackoverflow
 #+END_QUOTE
 *** Add connection mutation
 A new connection is made between two unconnected nodes. The weight is set to random. The innovation number is set to $max_{innov\_number} +1$
