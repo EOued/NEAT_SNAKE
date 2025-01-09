@@ -34,11 +34,12 @@ int isGreaterInnov(void* elem1, void* elem2)
 int min(int a, int b) { return a < b ? a : b; }
 int max(int a, int b) { return a > b ? a : b; }
 
-NN* crossover(NN* parent1, NN* parent2)
+NN* crossover(NN* parent1, NN* parent2, float disabledPercentage)
 {
   if (parent1->input_n != parent2->input_n || parent1->output_n != parent2->output_n)
     sendError(
         "Trying to mate two NNs with different input/output nodes values ! Stopping crossover.", 2);
+  // One of the parent is NULL
   if (!parent1->genes_connections && !parent2->genes_connections) return parent1;
   if (!parent1->genes_connections) return parent2;
   if (!parent2->genes_connections) return parent1;
@@ -85,25 +86,18 @@ NN* crossover(NN* parent1, NN* parent2)
       // The parents have same fitness : we randomly take (or not) the gene
       if (parent1->score == parent2->score)
       {
-        if (rdm == 0 && p1InnovValue == i)
-        {
-          child->genes_connections[i - shift] = parent1->genes_connections[p1InnovIndex];
-          child->connection_n++;
-          goto p1leave;
-        }
-        else if (rdm == 1 && p2InnovValue == i)
-        {
-          child->genes_connections[i - shift] = parent2->genes_connections[p2InnovIndex];
-          child->connection_n++;
-          goto p2leave;
-        }
+        NN* parent = rdm ? parent2 : parent1;
+        int innov  = rdm ? p2InnovValue : p1InnovValue;
+        int index  = rdm ? p2InnovIndex : p1InnovIndex;
+        if (i == innov) child->genes_connections[i - shift] = parent->genes_connections[index];
+        if (rdm) goto p2leave;
+        goto p1leave;
+        // No genes have been added : we need to shift all futur indexes of 1
+        shift++;
+        if (p1InnovValue == i) goto p1leave;
         else
-        { // No genes have been added : we need to shift all futur indexes of 1
-          shift++;
-          if (p1InnovValue == i) goto p1leave;
-          else
-            goto p2leave;
-        }
+          goto p2leave;
+
       p1leave:
         p1InnovIndex++;
         continue;
@@ -115,6 +109,13 @@ NN* crossover(NN* parent1, NN* parent2)
     if (rdm == 0) child->genes_connections[i - shift] = parent1->genes_connections[p1InnovIndex];
     else
       child->genes_connections[i - shift] = parent2->genes_connections[p2InnovIndex];
+    if (parent1->genes_connections[p1InnovIndex].disabled &&
+        parent2->genes_connections[p2InnovIndex].disabled)
+    {
+      child->genes_connections[i - shift].disabled =
+          (rand() % 100 < (int)(disabledPercentage * 100));
+    }
+
     child->connection_n++;
     p1InnovIndex++;
     p2InnovIndex++;
@@ -145,7 +146,7 @@ end:
   return child;
 }
 
-NN* mutation(NN* nn);
+NN* mutation(NN* nn, percentages* percentage) { int rdm = rand() % 100; }
 
 connection initConnection(int input, enum state inputState, int output, enum state outputState,
                           float weight, int disabled, int innov)
@@ -201,7 +202,7 @@ int main()
   p2->genes_connections[6] = initConnection(6, hidden, 4, output, 0, 0, 6);
   p2->genes_connections[7] = initConnection(3, input, 5, hidden, 0, 0, 8);
   p2->genes_connections[8] = initConnection(1, input, 6, hidden, 0, 0, 9);
-  NN* child                = crossover(p1, p2);
+  NN* child                = crossover(p1, p2, 0.75);
   printNN(p1);
   printNN(p2);
   printNN(child);

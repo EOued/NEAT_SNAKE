@@ -1,0 +1,58 @@
+* DONE Genotype Implementation
+CLOSED: [2025-01-09 Thu 08:40]
+*** Informations
+The genotype is the structure that represent a neural network. It can be viewed as a list of genes (Either sensor genes, hidden genes or output genes) and a list of connections between thoses genes.
+Each gene can be represented by a number and a tag. The tag "sensor" means that is is a gene from the input layer, the tag "hidden" means that it is a gene from an hidden layer and the tag "ouput" means that it it a gene from the output layer.
+A gene connection have 5 attributes : the input gene and the ouput gene (so the neural network is just an oriented graph), the weight of the gene (from 0 to 1, floating number),
+if the connection is enabled or not (a connection disabled means that the genes are no longer connected, but they might be connected again in the future) and an innovation number
+* TODO Representation of neural network
+A genotype will represent a neural network.
+** TODO Find a way to make the propagation of informations efficient
+* DONE Crossover Implementation
+CLOSED: [2025-01-09 Thu 08:40]
+The genes connections with the same innovation number are lined up.
+Genes that does not match are either disjoint or excess.
+Then, the offspring is mades of connections that are randomly choosed between the parents.
+Disabled genes may be enabled in future generations.
+Disjoint and excess genes can also be inherited randomly.
+* TODO Mutation Implementation
+*** Weight modification
+Each connection can be either perturbed or not
+** DONE Find more informations about weight mutations
+CLOSED: [2025-01-09 Thu 09:40]
+#+BEGIN_QUOTE
+Our mutation operators operated on a single network and would select a random weight and either:
+- completely replace it with a new random value
+- change the weight by some percentage. (multiply the weight by some random number between 0 and 2 - practically speaking we would tend to constrain that a bit and multiply it by a random number between 0.5 and 1.5. This has the effect of scaling the weight so that it doesn't change as radically. You could also do this kind of operation by scaling all the weights of a particular neuron.
+- add or subtract a random number between 0 and 1 to/from the weight.
+- Change the sign of a weight.
+- swap weights on a single neuron.
+You can certainly get creative with mutation operators, you may discover something that works better for your particular problem.
+-- stackoverflow
+#+END_QUOTE
+*** Add connection mutation
+A new connection is made between two unconnected nodes. The weight is set to random. The innovation number is set to $max_{innov\_number} +1$
+*** Add node mutation
+An old connection is split.
+The old connection is disabled and two new connections are added to the genome. The new connection leading into the new node receive a weight of 1, and the new connection leading into the new node receive the old weight.
+The innov number of the first connection is set to max_innov + 1, and the innov number of the second connection is set to max_innov+2.
+* TODO Save Neural Network informations
+Just serialize the structure
+* TODO Define input and output
+Input : The grid
+*** TODO Which value to each grid statue
+Ouput : Moves
+Orientation of the head
+
+*** Utils
+**** Values of the grid :
+- -1 : Empty
+- -0.5: Apple
+- 0.5: Body
+- 1: Head
+**** Values of the orientation
+-1: Right
+-0.5: Left
+0.5: Up
+1: Down
+0.7x - 1.05

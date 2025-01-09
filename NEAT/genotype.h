@@ -26,6 +26,14 @@ typedef struct
   connection* genes_connections;
   int score;
 } NN;
+typedef struct
+{
+  float weightModif;
+  float uniformPerturbation;
+  float randomPerturbation;
+  float newNode;
+  float newConnection;
+} percentages;
 
 /**
  @brief Init and return an empty neural network with n input and n output
@@ -35,6 +43,6 @@ typedef struct
 */
 NN* initEmptyNN(int input_n, int output_n);
 void deleteNN(NN* nn);
-NN* crossover(NN* parent1, NN* parent2);
-NN* mutation(NN* nn);
+NN* crossover(NN* parent1, NN* parent2, float disabledPercentage);
+NN* mutation(NN* nn, percentages* p);
 #endif
