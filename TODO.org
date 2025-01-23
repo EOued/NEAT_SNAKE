@@ -55,3 +55,6 @@ Orientation of the head
 0.5: Up
 1: Down
 0.7x - 1.05
+
+* CODE
+** TODO Save for each NN the number of genes

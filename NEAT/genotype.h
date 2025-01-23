@@ -23,14 +23,16 @@ typedef struct
   unsigned int input_n;
   unsigned int output_n;
   unsigned int connection_n;
+  unsigned int node_n;
+  int max_innov;
   connection* genes_connections;
   int score;
 } NN;
+
 typedef struct
 {
   float weightModif;
   float uniformPerturbation;
-  float randomPerturbation;
   float newNode;
   float newConnection;
 } percentages;
@@ -44,5 +46,6 @@ typedef struct
 NN* initEmptyNN(int input_n, int output_n);
 void deleteNN(NN* nn);
 NN* crossover(NN* parent1, NN* parent2, float disabledPercentage);
-NN* mutation(NN* nn, percentages* p);
+void mutation(NN* nn, percentages* p);
+connection initConnection(int input, enum state inputState, int output, enum state outputState, float weight, int disabled, int innov);
 #endif
