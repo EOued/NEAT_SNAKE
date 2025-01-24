@@ -15,7 +15,7 @@ Genes that does not match are either disjoint or excess.
 Then, the offspring is mades of connections that are randomly choosed between the parents.
 Disabled genes may be enabled in future generations.
 Disjoint and excess genes can also be inherited randomly.
-* TODO Mutation Implementation
+* DONE Mutation Implementation
 *** Weight modification
 Each connection can be either perturbed or not
 ** DONE Find more informations about weight mutations

@@ -10,9 +10,7 @@ enum state
 typedef struct
 {
   int input;
-  enum state inputState;
   int output;
-  enum state outputState;
   float weight;
   int disabled;
   int innov;
@@ -26,6 +24,7 @@ typedef struct
   unsigned int node_n;
   int max_innov;
   connection* genes_connections;
+  enum state* genes_states;
   int score;
 } NN;
 
@@ -47,5 +46,5 @@ NN* initEmptyNN(int input_n, int output_n);
 void deleteNN(NN* nn);
 NN* crossover(NN* parent1, NN* parent2, float disabledPercentage);
 void mutation(NN* nn, percentages* p);
-connection initConnection(int input, enum state inputState, int output, enum state outputState, float weight, int disabled, int innov);
+connection initConnection(int input, int output, float weight, int disabled, int innov);
 #endif
